@@ -1,30 +1,23 @@
 <template>
   	<div class="app">
-	  	<el-col :span="4">
-			<el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+	  	<el-col :span="4" class="navibar">
+			<el-menu default-active="2" class="el-menu-vertical-demo" mode="vertical" theme="dark" @select="handleSelect">
 				<el-submenu index="1">
-					<template slot="title"><i class="el-icon-message"></i>导航一</template>
-					<el-menu-item-group>
-						<template slot="title">分组一</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-2">选项2</el-menu-item>
-					</el-menu-item-group>
-					<el-menu-item-group title="分组2">
-						<el-menu-item index="1-3">选项3</el-menu-item>
-					</el-menu-item-group>
-					<el-submenu index="1-4">
-					<template slot="title">选项4</template>
-					<el-menu-item index="1-4-1">选项1</el-menu-item>
-					</el-submenu>
+					<template slot="title"><i class="el-icon-message"></i>基础设置</template>
+					<el-menu-item index="cataloglist">类目设置</el-menu-item>
 				</el-submenu>
-			<el-menu-item index="2"><i class="el-icon-menu"></i>导航二</el-menu-item>
-			<el-menu-item index="3"><i class="el-icon-setting"></i>导航三</el-menu-item>
-		</el-menu>
-	</el-col>
-	<transition name="page-slide">
-		<router-view></router-view>
-	</transition>
-  </div>
+				<el-submenu index="2">
+					<template slot="title"><i class="el-icon-message"></i>内容管理</template>
+					<el-menu-item index="bloglist">文章管理</el-menu-item>
+				</el-submenu>
+			</el-menu>
+		</el-col>
+		<el-col class="tabpage"  :span="20">
+			<transition name="page-slide">
+				<router-view></router-view>
+			</transition>
+		</el-col>
+  	</div>
 </template>
 <script>
 export default {
@@ -33,13 +26,22 @@ export default {
     	return {
 
     	}
-  	}
+  	},
+	methods:{
+		handleSelect:function(index){
+			this.$router.push(index);
+		}
+	}
 }
 </script>
 <style>
-  	body,html{
-		padding: 0px;
-		margin: 0px;
-		font-family: "Microsoft YaHei"
-  	}
+	#manager,.app{
+		height: 100%;
+		overflow:hidden;
+	}
+	.navibar{
+		height:100%;
+		background:#1f2d3d;
+
+	}
 </style>
