@@ -3,7 +3,7 @@
         <el-breadcrumb separator="/" class="pagenavigate">
             <el-breadcrumb-item>内容管理</el-breadcrumb-item>
             <el-breadcrumb-item to="../bloglist">文章管理</el-breadcrumb-item>
-            <el-breadcrumb-item>新增</el-breadcrumb-item>
+            <el-breadcrumb-item>编辑</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="blog-info">
             <el-input placeholder="请输入文章标题" v-model="title" class="input-group">
