@@ -49,6 +49,14 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+            layout="prev, pager, next"
+            :total="totalCount"
+            class="pagenation"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            @current-change="changePage">
+        </el-pagination>
     </div>
 </template>
 <script>
@@ -62,6 +70,9 @@
                 catalogAdd:'',
                 catalogUpdate:'',
                 catalogIdUpdate:0,
+                pageSize:12,
+                totalCount:0,
+                currentPage:1,
             }
         },
         methods:{
@@ -74,12 +85,7 @@
                     catalogId:row.catalogId
                 },function(res){
                     if(res.code == 200){
-                        R.getCatalogList(self,{
-                        },function(res){
-                            if(res.code == 200){
-                                self.cataloglist = res.data.list;
-                            }
-                        })
+                        self.getCatalog(1);
                         self.$message('删除成功');
                         self.addDialogShow = false;
                     }
@@ -97,12 +103,7 @@
                     catalogName:self.catalogAdd
                 },function(res){
                     if(res.code == 200){
-                        R.getCatalogList(self,{
-                        },function(res){
-                            if(res.code == 200){
-                                self.cataloglist = res.data.list;
-                            }
-                        })
+                        self.getCatalog(1);
                         self.$message('新增成功！');
                         self.addDialogShow = false;
                     }else{
@@ -117,30 +118,35 @@
                     catalogName:self.catalogUpdate
                 },function(res){
                     if(res.code == 200){
-                        R.getCatalogList(self,{
-                        },function(res){
-                            if(res.code == 200){
-                                self.cataloglist = res.data.list;
-                            }
-                        })
+                        self.getCatalog(1);
                         self.$message('修改成功！');
                         self.updateDialogShow = false;
                     }else{
                         self.cataloglist = [];
                     }
                 })
+            },
+            changePage:function(currentPage){
+                this.getCatalog(currentPage);
+            },
+            getCatalog:function(page,success,error){
+                var self = this;
+                R.getCatalogList(this,{page:page,pageSize:self.pageSize},function(res){
+                    if(res.code == 200){
+                        self.cataloglist = res.data.list;
+                        self.totalCount = res.pageinfo.totalCount;
+                        success && success();
+                    }else{
+                        self.cataloglist = [];
+                        self.totalCount = 0;
+                        error && error();
+                    }
+                })
             }
         },
         mounted:function(){
             var self = this;
-            R.getCatalogList(this,{
-            },function(res){
-                if(res.code == 200){
-                    self.cataloglist = res.data.list;
-                }else{
-                    self.cataloglist = [];
-                }
-            })
+            self.getCatalog(1);
         },
         filters:{
             dateFilter:function(val){
@@ -160,6 +166,10 @@
         }
         .toolbar{
             margin-bottom: 5px;
+        }
+        .pagenation{
+            text-align: center;
+            margin-top:5px;
         }
     }
 </style>

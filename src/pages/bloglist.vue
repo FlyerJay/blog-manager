@@ -8,19 +8,22 @@
             <el-button type="info" icon="plus" @click="addBlog">新增</el-button>
         </el-button-group>
         <el-table
-            :data="tagslist"
+            :data="bloglist"
             border
             style="width: 100%">
             </el-table-column>
             <el-table-column label="发布日期" width="150" align="center">
                 <template scope="scope">
                     <el-icon name="time"></el-icon>
-                    {{ scope.row.date}}
+                    {{ scope.row.createdAt | dateFilter}}
                 </template>
             </el-table-column>
-            <el-table-column prop="catalogName" label="文章分类" width="120" align="center">
+            <el-table-column label="文章分类" width="120" align="center">
+                <template scope="scope">
+                    {{ scope.row.Catalog.catalogName | dateFilter}}
+                </template>
             </el-table-column>
-            <el-table-column prop="title" label="标题" width="180" align="center">
+            <el-table-column prop="title" label="标题" width="240" align="center">
             </el-table-column>
             <el-table-column prop="hit" label="浏览次数" width="120" align="center">
             </el-table-column>
@@ -33,38 +36,65 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-pagination
+            layout="prev, pager, next"
+            :total="totalCount"
+            class="pagenation"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            @current-change="changePage">
+        </el-pagination>
     </div>
 </template>
 <script>
+    import R from '../ajax'
     export default{
         data () {
             return {
-                tagslist:[{
-                    blogId:1,
-                    date:"2017-02-10",
-                    catalogName:"web前端",
-                    hit:1,
-                    love:1,
-                    title:"文章1",
-                },{
-                    blogId:2,
-                    date:"2017-02-11",
-                    catalogName:"职场生涯",
-                    hit:1,
-                    love:1,
-                    title:"文章2",
-                }]
+                bloglist:[],
+                pageSize:12,
+                totalCount:24,
+                currentPage:1,
             }
         },
         methods:{
             handleDelete:function(index,row){
-
+                var self = this;
+                R.deleteBlog(this,{id:row.blogId},function(res){
+                    if(res.code == 200){
+                        self.$message('删除成功');
+                        self.getBlogList(1);
+                    }
+                })
             },
             handleEdit:function(index,row){
                 this.$router.push("../blogedit/"+row.blogId);
             },
             addBlog:function(){
                  this.$router.push("../blogadd");
+            },
+            getBlogList:function(page){
+                var self = this;
+                R.getBlogList(this,{page:page,pageSize:self.pageSize},function(res){
+                    if(res.code == 200){
+                        self.bloglist = [];
+                        self.bloglist = res.data.list
+                        self.totalCount = res.pageinfo.totalCount;
+                    }else{
+                        self.bloglist = []
+                    }
+                })
+            },
+            changePage:function(currentPage){
+                this.getBlogList(currentPage);
+            }
+        },
+        mounted:function(){
+            this.getBlogList(1);
+        },
+        filters:{
+            dateFilter:function(val){
+                return val.substring(0,10);
             }
         }
     }
@@ -80,6 +110,10 @@
         }
         .toolbar{
             margin-bottom:5px;
+        }
+        .pagenation{
+            text-align: center;
+            margin-top:5px;
         }
     }
 </style>

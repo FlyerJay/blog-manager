@@ -6,14 +6,14 @@
             <el-breadcrumb-item>编辑</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="blog-info">
-            <el-input placeholder="请输入文章标题" v-model="title" class="input-group">
+            <el-input placeholder="请输入文章标题" v-model="title" class="input-group" >
                 <template slot="prepend">文章标题</template>
                 <template slot="append" style="width:10%">
-                    <el-select v-model="catalog" placeholder="请选择">
+                    <el-select v-model="catalog" placeholder="请选择" @change="onSelectChange">
                         <el-option
                         v-for="item in cataloglist"
-                        :label="item.label"
-                        :value="item.value"
+                        :label="item.catalogName"
+                        :value="item.catalogId"
                         :disabled="item.disabled">
                         </el-option>
                     </el-select>
@@ -23,27 +23,74 @@
                 <div id="blogEditor"></div>
             </div>
         </div>
+        <el-button-group class="toolbar" :span="24">
+            <el-button type="info" icon="circle-check" @click="saveBlog">保存</el-button>
+            <el-button type="info" icon="circle-close" @click="goBak">返回</el-button>
+        </el-button-group>
     </div>
 </template>
 <script>
+    import R from '../ajax'
     export default{
         data () {
             return {
                 title:'',
-                cataloglist:[
-                    {
-                        label:'web前端',
-                        value:1,
-                    },
-                    {
-                        label:'职场生活',
-                        value:2,
-                    }
-                ],
+                cataloglist:[],
                 catalog:'',
+                id:0,
             }
         },
         methods:{
+            getBlog:function(){
+                var self = this;
+                R.getBlog(this,{id:this.$route.params.id},function(res){
+                    if(res.code == 200){
+                        self.title = res.data.title;
+                        for(var i=0;i<self.cataloglist.length;i++){
+                            if(self.cataloglist[i].catalogId == res.data.catalogId){
+                                break;
+                            }
+                        }
+                        self.catalog = self.cataloglist[i].catalogName;
+                        self.editor.$txt.html(res.data.article);
+                        setTimeout(function(){
+                            self.id = res.data.catalogId;
+                        },0)//异步执行，防止被select事件的值覆盖掉
+                    }
+                })
+            },
+            getCatalogList:function(){
+                var self = this;
+                R.getCatalogList(this,{
+                },function(res){
+                    if(res.code == 200){
+                        self.cataloglist = res.data.list;
+                            self.getBlog();
+                    }else{
+                        self.cataloglist = [];
+                    }
+                })
+            },
+            saveBlog:function(){
+                var self = this;
+                var data = {
+                    id:this.$route.params.id,
+                    catalogId:self.id,
+                    title:self.title,
+                    article:self.editor.$txt.html()
+                }
+                R.updateBlog(this,data,function(res){
+                    if(res.code == 200){
+                         self.$message('修改成功');
+                    }
+                })
+            },
+            goBak:function(){
+                this.$router.go(-1);
+            },
+            onSelectChange:function(val){
+                this.id = val;
+            },
         },
         mounted:function(){
             var self = this;
@@ -58,9 +105,10 @@
             };
             self.editor.create();
             var windowHeight = document.documentElement.clientHeight;
-            var otherHeight = (($(".pagenavigate").css("height")).replace("px","") - 0) + (($(".input-group").css("height")).replace("px","") - 0)
+             var otherHeight = (($(".pagenavigate").css("height")).replace("px","") - 0) + (($(".input-group").css("height")).replace("px","") - 0) + (($(".toolbar").css("height")).replace("px","") - 0)
             $("#blogEditor").css('height',windowHeight - otherHeight -70 + 'px');
-        }
+            this.getCatalogList();
+        },
     }
 </script>
 <style scoped lang="less">
@@ -76,6 +124,9 @@
             .input-group{
                 margin-bottom:10px;
             }
+        }
+        .toolbar{
+            margin-top:5px;
         }
     }
 </style>
