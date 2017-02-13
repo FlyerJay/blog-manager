@@ -4,11 +4,11 @@
 			<el-menu default-active="2" class="el-menu-vertical-demo" mode="vertical" theme="dark" @select="handleSelect">
 				<el-submenu index="1">
 					<template slot="title"><i class="el-icon-message"></i>基础设置</template>
-					<el-menu-item index="../cataloglist">分类设置</el-menu-item>
+					<el-menu-item index="/manager/cataloglist">分类设置</el-menu-item>
 				</el-submenu>
 				<el-submenu index="2">
 					<template slot="title"><i class="el-icon-message"></i>内容管理</template>
-					<el-menu-item index="../bloglist">文章管理</el-menu-item>
+					<el-menu-item index="/manager/bloglist">文章管理</el-menu-item>
 				</el-submenu>
 			</el-menu>
 		</el-col>
@@ -29,7 +29,7 @@ export default {
   	},
 	methods:{
 		handleSelect:function(index){
-			this.$router.push(index);
+			this.$router.replace(index);
 		}
 	}
 }

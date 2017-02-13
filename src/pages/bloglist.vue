@@ -68,10 +68,10 @@
                 })
             },
             handleEdit:function(index,row){
-                this.$router.push("../blogedit/"+row.blogId);
+                this.$router.replace("/manager/blogedit/"+row.blogId);
             },
             addBlog:function(){
-                 this.$router.push("../blogadd");
+                 this.$router.replace("/manager/blogadd");
             },
             getBlogList:function(page){
                 var self = this;

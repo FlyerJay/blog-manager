@@ -5,19 +5,23 @@ export default [
 		component:App,
 		children:[
 			{
-				path:"/cataloglist",
+				path:"manager",
+				component:App
+			},
+			{
+				path:"manager/cataloglist",
 				component:resolve => require(["../pages/cataloglist"],resolve)
 			},
 			{
-				path:"/bloglist",
+				path:"manager/bloglist",
 				component:resolve => require(["../pages/bloglist"],resolve)
 			},
 			{
-				path:"/blogedit/:id",
+				path:"manager/blogedit/:id",
 				component:resolve => require(["../pages/blogedit"],resolve)
 			},
 			{
-				path:"/blogadd",
+				path:"manager/blogadd",
 				component:resolve => require(["../pages/blogadd"],resolve)
 			}
 		]

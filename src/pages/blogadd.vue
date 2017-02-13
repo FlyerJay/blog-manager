@@ -2,7 +2,7 @@
     <div class="blogadd-page">
         <el-breadcrumb separator="/" class="pagenavigate">
             <el-breadcrumb-item>内容管理</el-breadcrumb-item>
-            <el-breadcrumb-item to="../bloglist">文章管理</el-breadcrumb-item>
+            <el-breadcrumb-item to="/manager/bloglist">文章管理</el-breadcrumb-item>
             <el-breadcrumb-item>新增</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="blog-info">
@@ -96,7 +96,7 @@
                 }
             },
             goBak:function(){
-                this.$router.go(-1);
+                this.$router.replace("/manager/bloglist");
             },
             onSelectChange:function(val){
                 this.catalogId = val;
